@@ -11,20 +11,40 @@ public class Spawner
     Enemy mCurrentEnemy;
     boolean mHasAttacked;
     boolean mCanSpawn;
+
     
     public Spawner(Vector2f pos)
     {
         //Something that constructs a spawner based on the position it was given
         mPos = pos;
+        
     }
     
     public Enemy Spawn()
     {
         //Something to create a beautiful new enemy life
         mHasAttacked = false;
-        Enemy e = new Ghost(new Vector2f(mPos.x, mPos.y), 10, this);
+        float choose = wave.whichEnemy();
+        Enemy e;
+        
+        e = new Ghost(new Vector2f(mPos.x, mPos.y), 10, this);
+        
+        if (choose > 0.6f && choose <= 0.8f)
+        {
+            e = new Phantom(new Vector2f(mPos.x, mPos.y), 10, this);
+        }
+        else if (choose > 0.8f && choose <= 0.95f)
+        {
+            e = new Spectre(new Vector2f(mPos.x, mPos.y), 10, this);
+        }
+        else if (choose > 0.95f && choose <= 1f)
+        {
+            e = new Wraith(new Vector2f(mPos.x, mPos.y), 10, this);
+        }
+        
         e.startMove(MainClass.center.copy());
         mCurrentEnemy = e;
+
         return e;
     }
     

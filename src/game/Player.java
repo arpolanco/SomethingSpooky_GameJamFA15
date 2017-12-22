@@ -29,10 +29,11 @@ public class Player
     private float mFrameTimer;
     
     //Statistics
-    protected int numKills = 0;
+    protected static int numKills = 0;
     protected static int health;
     //if player pauses the game or nah
     boolean paused;
+    protected static int healthCount = 0;
     
     public Player(Vector2f pos, float speed)
     {
@@ -73,8 +74,8 @@ public class Player
             //mTorch = mTorch.getScaledCopy(0.9f);
         } catch (SlickException ex) {
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+    }
+    
         mHead = mLooking[3];
     }
     
@@ -104,6 +105,7 @@ public class Player
         {
             mFrameTimer += dt;
         }
+        
         if (spawners != null)
         {
             //Something to juggles all the the users inputs which is pretty nifty
@@ -112,49 +114,49 @@ public class Player
             if (gc.getInput().isKeyPressed(Input.KEY_NUMPAD7))
             {
                 System.out.println("7");
-                mHead = mLooking[0];
+                    mHead = mLooking[0];
                 act("topleft", spawners);
             }
             else if (gc.getInput().isKeyPressed(Input.KEY_NUMPAD8))
             {
                 System.out.println("8");
-                mHead = mLooking[1];
+                    mHead = mLooking[1];
                 act("topmiddle", spawners);
             }
             else if (gc.getInput().isKeyPressed(Input.KEY_NUMPAD9))
             {
                 System.out.println("9");
-                mHead = mLooking[1];
+                    mHead = mLooking[1];
                 act("topright", spawners);
             }
             else if (gc.getInput().isKeyPressed(Input.KEY_NUMPAD4))
             {
                 System.out.println("4");
-                mHead = mLooking[2];
+                    mHead = mLooking[2];
                 act("midleft", spawners);
             }
             else if (gc.getInput().isKeyPressed(Input.KEY_NUMPAD6))
             {
                 System.out.println("6");
-                mHead = mLooking[3];
+                    mHead = mLooking[3];
                 act("midright", spawners);
             }
             else if (gc.getInput().isKeyPressed(Input.KEY_NUMPAD1))
             {
                 System.out.println("1");
-                mHead = mLooking[4];
+                    mHead = mLooking[4];
                 act("botleft", spawners);
             }
             else if (gc.getInput().isKeyPressed(Input.KEY_NUMPAD2))
             {
                 System.out.println("2");
-                mHead = mLooking[5];
+                    mHead = mLooking[5];
                 act("botmiddle", spawners);
             }
             else if (gc.getInput().isKeyPressed(Input.KEY_NUMPAD3))
             {
                 System.out.println("3");
-                mHead = mLooking[5];
+                    mHead = mLooking[5];
                 act("botright", spawners);
             }
 
@@ -182,13 +184,19 @@ public class Player
                 {
                     s.mCurrentEnemy.isAlive = false;
                     numKills++;
+                    healthCount++;
+                    if(healthCount >= 25)
+                    {
+                        if(health < 7)
+                        {
+                        health++;
+                        healthCount=0;
+                        }
+                    }
                 }
                 //otherwise...>.> well gg your lifespan kid
                 s.mHasAttacked = true;
             }
         }
     }
-    
-
-    
 }

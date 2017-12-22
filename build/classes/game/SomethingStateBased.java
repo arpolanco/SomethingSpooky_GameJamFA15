@@ -7,6 +7,7 @@ import game.*;
 public class SomethingStateBased extends StateBasedGame {
     public static int gameOne;
     public static int gameTwo;
+    public static int gameThree;
     public static String mName;
     
     public SomethingStateBased(String name)
@@ -23,6 +24,9 @@ public class SomethingStateBased extends StateBasedGame {
     MainClass main = new MainClass();
     this.addState(main);
     gameTwo = main.getID();
+    Results results = new Results();
+    this.addState(results);
+    gameThree = results.getID();
     }
 
 }

@@ -7,7 +7,7 @@ import game.Player;
 
 public abstract class Enemy 
 {
-    Vector2f mPos, mVel, mTargetPos;
+    Vector2f mPos, mVel, mTargetPos, dist;
     Vector2f mExposed; //Holds the min float value and max float value of the time the enemy is exposed
     
     Image mImageNormal, mImageExposed;
@@ -18,6 +18,8 @@ public abstract class Enemy
     float mDist;
     Spawner mSpawner;
     boolean isAlive = true;
+    int mDmg;
+     
     
     public Enemy(Vector2f pos, int rad, Spawner spawner)
     {
@@ -25,6 +27,7 @@ public abstract class Enemy
         mRad = rad;
         mTimeAlive = 0f;
         mSpawner = spawner;
+        mDmg = 1;
     }
     
     public void startMove(Vector2f targetPos)
@@ -32,6 +35,7 @@ public abstract class Enemy
         //Something to start the movement of the enemy based on the position of it spawning
         mTargetPos = new Vector2f(targetPos.x, targetPos.y);
         mVel = targetPos.sub(mPos).normalise();
+        dist = mTargetPos.sub(mPos);
     }
     
     public void update(float elapsedTime)
@@ -46,12 +50,16 @@ public abstract class Enemy
         }
         
         //Something if le enemy intrudes the player's defenses and dunks him
-        if(mTargetPos.distance(mPos) <= 1)
+        
+        
+        if(mPos.distance(mSpawner.mPos) > mSpawner.mPos.distance(new Vector2f(649, 375)))
         {
             mVel = new Vector2f(0,0);
             isAlive = false;
-            //Player.health--;
+            Player.health-= mDmg;
         }
+        
+        
     }
     
     public void draw(Graphics g)

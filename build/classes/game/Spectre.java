@@ -18,8 +18,8 @@ public class Spectre extends Enemy
         //Something to get that LOVELY ghostly image
         try
         {
-            mImageNormal = new Image("resources/ghost.png");
-            mImageExposed = new Image("resources/ghostExposed.png");
+            mImageNormal = new Image("resources/spectre.png");
+            mImageExposed = new Image("resources/spectreExposed.png");
         }
         catch (SlickException ex)
         {

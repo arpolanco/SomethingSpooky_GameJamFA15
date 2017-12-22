@@ -23,12 +23,13 @@ public class MainClass extends BasicGameState implements MouseListener
     static int borderWidth = 3;
     static int GUIWidth = 271;
     static int pathHeight = 15;
+    float doneCounter = 0f;
     
     static Vector2f gameSize = new Vector2f(screenSize.x-(borderWidth * 3 + GUIWidth) , screenSize.y - (borderWidth * 3 + pathHeight));
-    static Vector2f center = new Vector2f(screenSize.x - (borderWidth + gameSize.x / 2), borderWidth + gameSize.y / 2);
+    static Vector2f center = new Vector2f(649, 375);
     
     Player player;
-    Image HUD, spotlight, progressBar, ghostDot, exitScreen, heartActive, heartDeactive;
+    Image HUD, spotlight, progressBar, ghostDot, exitScreen, heartActive, heartDeactive, progressDot;
     
     //someone is getting fancy now with their hashbrown maps, let's get some McD hashies plz
     
@@ -115,13 +116,14 @@ public class MainClass extends BasicGameState implements MouseListener
     float mOldTime;
     float spawnTimerMax = 1.0f;
     float spawnTimer = spawnTimerMax;
-    int wave = 0;
+    
     
     LinkedList<String> mDirections = new LinkedList<String>();
     
+    
     TrueTypeFont font;
     private static final int gameID = 2;
-    
+    static int curProgress;
     Scene scene;
     
     public MainClass()
@@ -141,19 +143,20 @@ public class MainClass extends BasicGameState implements MouseListener
     public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
                 //System.out.println(center);
         
-        scene = new Scene("resources/background.png", "resources/foreground.png", new Vector2f(0f,16f), 0.2f);
+        scene = new Scene("resources/background.png", "resources/foreground.png", new Vector2f(0f,55f), 0.2f);
         
-        player = new Player(center,
-                            new Vector2f(50,50));
+        player = new Player(new Vector2f(649,375), 100f);
         
         //Something to initalize all le nudes I mean...*coughs*
         HUD = new Image("resources/HUD.png");
         spotlight = new Image("resources/spotlight.png");
         progressBar = new Image("resources/SomethingProgress.png");
-        ghostDot = new Image("resources/Something TestGhostDot.png");
+        progressDot = new Image("resources/Something progressDot.png");
+        ghostDot = new Image("resources/GhostDot.png");
         exitScreen = new Image("resources/ExitScreen.png");
         heartActive = new Image("resources/heart1.png");
         heartDeactive = new Image("resources/heart2.png");
+        
         
         mOldTime = timer.getTime();
         
@@ -189,6 +192,7 @@ public class MainClass extends BasicGameState implements MouseListener
         }
         catch (Exception e)
         {
+            
             e.printStackTrace();
         }
     }
@@ -219,16 +223,20 @@ public class MainClass extends BasicGameState implements MouseListener
         
         
         //renders the progress bar nonsense
-        for(int i=1; i <= 10; i++)
+        for(int i=1; i <= 9; i++)
         {
-            g.drawImage(ghostDot, 275+(i*65), 750);
+            g.drawImage(progressDot, 290+ (i*70), 750);
+            for(int j=1; j <= curProgress; j++)
+            {
+                g.drawImage(ghostDot, 290+ (j*70), 750);
+                //System.out.println(curProgress);
+            }
         }
         //rendering healthbar nonsense
-        int healthcount = 0;
-        for(int e=1; e <=3; e++)
+        for(int e=1; e <=7; e++)
         {
 
-            g.drawImage(heartDeactive, 25+(e*50), 125);
+            g.drawImage(heartDeactive.getScaledCopy(1.5f), 135-heartDeactive.getScaledCopy(1.5f).getWidth()/2, 100+e*heartDeactive.getScaledCopy(1.5f).getHeight());
             
             //while(healthcount < player.health)
             for(int j = 1; j <=player.health; j++)
@@ -240,27 +248,37 @@ public class MainClass extends BasicGameState implements MouseListener
                 //Austin: "Andrew you're stupid.
                 //Andrew: *puts head down in shame* I know. But I'm trying to get better :(
                 
-                g.drawImage(heartActive, 25+(j*50), 125);
-                //healthcount++;
+                g.drawImage(heartActive.getScaledCopy(1.5f), 135-heartActive.getScaledCopy(1.5f).getWidth()/2, 100+j*heartActive.getScaledCopy(1.5f).getHeight());
             }
         }
         
         //something for rendering statistics
-        font.drawString(90, 50, "WAVE   " +wave, Color.red);
+        font.drawString(90, 50, "WAVE   " +wave.wavenum, Color.red);
 
         //which do you like better?!
         font.drawString(10, 600, "DEFLECTED  " + player.numKills, Color.darkGray);
         font.drawString(10, 600, "DEFLECTED  " + player.numKills, Color.white);
         
+        //font.drawString(10, 500, "WAVE COMPLETE" , Color.white);
         
         //something to ask for a confirmation before the user quits the game
-        if (player.paused || player.health <= 0)
+        if (player.paused)
         {   
             
             g.drawImage(exitScreen, 400, 200);
             font.drawString(575, 350, "DO YOU GIVE UP?", Color.white);
             font.drawString(615, 400, "Yes or No", Color.white);
             font.drawString(595, 450, "ESC , ENTER , R", Color.white);
+            
+        }
+        
+        else if (player.health <= 0)
+        {   
+            
+            g.drawImage(exitScreen, 400, 200);
+            font.drawString(575, 350, "DO YOU GIVE UP?", Color.white);
+            font.drawString(615, 400, "Yes or No", Color.white);
+            font.drawString(595, 450, "ESC , ENTER", Color.white);
             
         }
     }
@@ -271,21 +289,8 @@ public class MainClass extends BasicGameState implements MouseListener
         
         if (player.health <= 0)
         {
-            System.out.println("You got shrekt m8 bwhahaha trololol");
-           
-            //or we can just have a retry button...>.>
-            if (gc.getInput().isKeyPressed(Input.KEY_ESCAPE))
-            {
-            System.out.println("RIP");
-            gc.exit();
-            }
-        
-            //enter to never stop running
-            else if (gc.getInput().isKeyPressed(Input.KEY_ENTER) || gc.getInput().isKeyPressed(Input.KEY_R) )
-            {
-                restart();
-            }
-            
+            sbg.enterState(SomethingStateBased.gameThree); 
+            player.paused = true;
         }
         //If something paused
         if (player.paused)
@@ -301,6 +306,7 @@ public class MainClass extends BasicGameState implements MouseListener
             else if (gc.getInput().isKeyPressed(Input.KEY_ENTER))
             {
                 player.paused = false;
+                mOldTime = timer.getTime();
             }
             
             //user resets
@@ -319,6 +325,10 @@ public class MainClass extends BasicGameState implements MouseListener
         float elapsedTime = now - mOldTime;
         mOldTime = now;
         
+        curProgress = wave.progress();
+            
+        if (!player.paused)
+        {
         if(elapsedTime != 0)
         {
             //updating all le ghosties
@@ -358,16 +368,17 @@ public class MainClass extends BasicGameState implements MouseListener
         {
             if(spawnRandom())
             {
-                spawnTimerMax -= 0.05f;
+                spawnTimerMax -= 0.0005f;
             }
-            if(spawnTimerMax < 0.1f)
+            if(spawnTimerMax < 1.55f - (0.05f*wave.wavenum))
             {
-                spawnTimerMax = 0.1f;
+                spawnTimerMax = 1.55f - (0.05f*wave.wavenum);
             }
             spawnTimer = spawnTimerMax;
         }
         
         timer.tick();
+        }
     }
     
     @Override
@@ -433,7 +444,8 @@ public class MainClass extends BasicGameState implements MouseListener
         //Something if the user decides to try again
         player.health = 3;
         player.numKills = 0;
-        wave = 0;
+        wave.wavenum = 1;
+        mOldTime = timer.getTime();
         
         //add more stuff that I can't think of off...ZZZZzzz...zz..
         
@@ -453,6 +465,7 @@ public class MainClass extends BasicGameState implements MouseListener
         {
             e.printStackTrace();
         }
+
         System.out.println();
     }
 }
