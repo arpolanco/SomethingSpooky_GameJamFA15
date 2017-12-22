@@ -75,7 +75,7 @@ private static final int gameID = 3;
         String tempDisplay = "Total Deflected  "+ Player.numKills;
         String tempDisplay2 = "Final Wave Reached  "+ wave.wavenum;
         String tempDisplay3 = "SSU GAMEJAM Fall 2015";
-        String tempDisplay4 = "Andrew Polanco Austin Ferguson Mitch Writght";
+        String tempDisplay4 = "Andrew Polanco Austin Ferguson Mitch Wright";
         
         font.drawString(512-font.getWidth(tempDisplay)/2, 425,tempDisplay, Color.yellow);
         font.drawString(512-font.getWidth(tempDisplay)/2, 475,tempDisplay2, Color.white);
